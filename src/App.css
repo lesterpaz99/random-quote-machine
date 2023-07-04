@@ -1,0 +1,22 @@
+.cardContainer {
+  width: 450px;
+  max-width: 450px;
+  padding: 40px 50px;
+  background-color: white;
+  border-radius: 3px;
+  color: black;
+}
+
+.author {
+  text-align: end;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.socialButtons {
+  display: flex;
+  gap: 6px;
+}
