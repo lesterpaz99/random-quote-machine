@@ -3,17 +3,39 @@ import Button from '@mui/material/Button';
 import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
 import { Twitter, Instagram } from '@mui/icons-material';
 import './App.css'
+import axios from 'axios';
 
 function App() {
-  const [currentQuote, setCurrentQuote] = useState(0);
+  const [quotes, setQuotes] = useState([]);
+  const [currentQuote, setCurrentQuote] = useState(null);
 
   // logic here ...
+  useEffect(() => {
+    const controller = new AbortController();
+    axios({
+      signal: controller.signal,
+      method: 'get',
+      url: 'https://type.fit/api/quotes'
+    }).then((response) => {
+      setQuotes(response.data);
+
+      // set initial quote
+      getNewQuote();
+    });
+
+    return () => controller.abort();
+  }, []);
+
+  const getNewQuote = () => {
+    const randomNumber = Math.floor(Math.random() * quotes.length);
+    setCurrentQuote(quotes[randomNumber]);
+  }
 
   return (
     <div className='cardContainer'>
       <div className='quote'>
-        <h1><span><FormatQuoteIcon style={{rotate: '180deg'}} /></span>{' '}quote here</h1>
-        <p className='author'>- Author here</p>
+        <h1><span><FormatQuoteIcon style={{rotate: '180deg'}} /></span>{' '}{currentQuote.text}</h1>
+        <p className='author'>- {currentQuote.author}</p>
       </div>
       <div className='buttons'>
         <div className='socialButtons'>
@@ -25,7 +47,9 @@ function App() {
           </Button>
         </div>
         <div>
-          <Button variant='contained' style={{textTransform: 'capitalize'}}>New Quote</Button>
+          <Button onClick={getNewQuote} variant='contained' style={{textTransform: 'capitalize'}}>
+            New Quote
+          </Button>
         </div>
       </div>
     </div>
