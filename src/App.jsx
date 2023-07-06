@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
-import Button from '@mui/material/Button';
-import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
-import { Twitter, Instagram } from '@mui/icons-material';
-import './App.css'
+import { Quote } from './Quote';
 import axios from 'axios';
+import './App.css'
 
 function App() {
   const [quotes, setQuotes] = useState([]);
@@ -11,19 +9,27 @@ function App() {
 
   // logic here ...
   useEffect(() => {
-    const controller = new AbortController();
-    axios({
-      signal: controller.signal,
-      method: 'get',
-      url: 'https://type.fit/api/quotes'
-    }).then((response) => {
+    // const controller = new AbortController();
+
+    const fetchQuotes = async () => {
+      try {
+        const response = await axios.get('https://type.fit/api/quotes', {
+        // signal: controller.signal
+      });
       setQuotes(response.data);
 
-      // set initial quote
-      getNewQuote();
-    });
+    } catch (err) {
+        console.log(err);
+      }
+    }
 
-    return () => controller.abort();
+    fetchQuotes();
+
+    // set initial quote
+    getNewQuote();
+    // return () => {
+    //   controller.abort();
+    // };
   }, []);
 
   const getNewQuote = () => {
@@ -31,29 +37,9 @@ function App() {
     setCurrentQuote(quotes[randomNumber]);
   }
 
-  return (
-    <div className='cardContainer'>
-      <div className='quote'>
-        <h1><span><FormatQuoteIcon style={{rotate: '180deg'}} /></span>{' '}{currentQuote.text}</h1>
-        <p className='author'>- {currentQuote.author}</p>
-      </div>
-      <div className='buttons'>
-        <div className='socialButtons'>
-          <Button variant='contained' href=''>
-            <Twitter />
-          </Button>
-          <Button variant='contained' href=''>
-            <Instagram />
-          </Button>
-        </div>
-        <div>
-          <Button onClick={getNewQuote} variant='contained' style={{textTransform: 'capitalize'}}>
-            New Quote
-          </Button>
-        </div>
-      </div>
-    </div>
-  )
+  if (quotes.length === 0 && currentQuote === null) return <h1>Loading...</h1>;
+
+  return <Quote currentQuote={currentQuote} getNewQuote={getNewQuote} />;
 }
 
 export default App
