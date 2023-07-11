@@ -36,24 +36,34 @@ function App() {
     };
   }, []);
 
+  /* The `useEffect` hook is used to perform side effects in a React component. In this case, the
+  effect is triggered whenever the `color` state variable changes. */
+  useEffect(() => {
+    document.getElementById('body').style.backgroundColor = color;
+  }, [color]);
 
+
+  /**
+   * The function `getNewQuote` generates a random quote and sets it as the current quote, while also
+   * generating a random color and setting it as the current color.
+   */
   const getNewQuote = () => {
     const randomNumber = Math.floor(Math.random() * quotes.length);
     setCurrentQuote(quotes[randomNumber]);
 
     // generate a random color string
-    const randomColor = '#'+(0x1000000+Math.random()*0xffffff).toString(16).substr(1,6);
+    const randomColor = getRandomDarkColor();
     setColor(randomColor);
   }
 
-  // function getRandomColor() {
-  //   const letters = '0123456789ABCDEF';
-  //   let color = '#';
-  //   for (let i = 0; i < 6; i++) {
-  //     color += letters[Math.floor(Math.random() * 16)];
-  //   }
-  //   return color;
-  // }
+  function getRandomDarkColor() {
+    let hue = Math.floor(Math.random() * 360);
+    let saturation = Math.floor(Math.random() * 100);
+    let lightness = Math.floor(Math.random() * 45); // Max at 45% to keep color dark
+
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+}
+
 
   if (!currentQuote) return <h1>Loading...</h1>;
 
